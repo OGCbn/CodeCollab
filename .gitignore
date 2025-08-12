@@ -1,5 +1,1 @@
 backend/.env
-SECRET_KEY=dev-secret
-JWT_SECRET_KEY=dev-jwt-secret
-DATABASE_URL=postgresql://postgres:postgres@db:5432/codecollab
-PORT=5000
