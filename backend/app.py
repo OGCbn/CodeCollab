@@ -87,9 +87,14 @@ def create_app():
     @socketio.on("code_change", namespace="/ws")
     def on_code_change(data):
         room = data.get("room")
-        delta = data.get("delta")
-        emit("code_update", {"delta": delta}, to=room, include_self=False)
-    
+        payload = {
+            "delta": data.get("delta"),
+            "ts": data.get("ts"),
+            "user": data.get("user"),
+            "clientId": data.get("clientId"),
+        }
+        emit("code_update", payload, to=room, include_self=False)
+        
     #cursor movement on screen
     @socketio.on("cursor_move", namespace="/ws")
     def on_cursor_move(data):
