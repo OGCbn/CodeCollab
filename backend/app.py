@@ -90,6 +90,25 @@ def create_app():
         delta = data.get("delta")
         emit("code_update", {"delta": delta}, to=room, include_self=False)
     
+    #cursor movement on screen
+    @socketio.on("cursor_move", namespace="/ws")
+    def on_cursor_move(data):
+        #data ex:
+        """
+        data = {room, user, pos: {lineNumber, column}}
+        """
+        room = data.get("room")
+        emit("cursor_update", {
+            "user": data.get("user"),
+            "pos": data.get("pos")
+        }, to=room, include_self= False)
+    
+    #hearbeat to show precense
+    @socketio.on("presence_ping", namespace="/ws")
+    def on_presence_ping(data):
+        room = data.get("room")
+        emit("presence_pong", {"user": data.get("user")}, to=room, include_self=False)
+    
     return app, socketio
 
 if __name__ == "__main__":
