@@ -12,7 +12,7 @@ export default function App () {
     const socketRef = useRef(null)
 
     useEffect(() =>{
-        const socket = io(WS_BASE, { path: '/socket.io', transports: ['websockets'], auth: { token: yourJwt}})
+        const socket = io(WS_BASE, { path: '/socket.io', transports: ['websockets']})
         socketRef.current = socket
         //on connection tell the room a "guest" has joined
         socket.on('connect', () => {

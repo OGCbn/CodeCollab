@@ -4,12 +4,16 @@ from flask import Flask, jsonify, request
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from dotenv import load_dotenv
+from flask_cors import CORS
 
 load_dotenv()
 
 def create_app():
     app = Flask(__name__)
 
+    CORS(app,
+         resources={r"/*": {"origins": os.getenv("CORS_ORIGINS", "http://localhost:5173")}},
+         supports_credentials=True)
     #configure flask
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret")
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "dev-jwt-secret")
