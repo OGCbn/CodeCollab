@@ -28,9 +28,9 @@ export default function App () {
     //debounce helper
     const debounceRef = useRef(null)
     const debounce = (fn, ms = 120) => {
-        (...args) => {
-        clearTimeout(debounceRef.current)
-        debounceRef.current = setTimeout(() => fn(...args), ms)
+        return (...args) => {
+            clearTimeout(debounceRef.current)
+            debounceRef.current = setTimeout(() => fn(...args), ms)
         }
     }
 
@@ -70,13 +70,8 @@ export default function App () {
             drawPeerCursors()
         })
 
-        //ping/pong
-        const ping = setInterval(() => {
-            socket.emit('presence_ping', { room, user})
-        }, 5000)
         //close the current websocket and leave the room
         return () => {
-            clearInterval(ping)
             socket.emit('leave', { room, user: 'guest'})
             socket.disconnect()
         }

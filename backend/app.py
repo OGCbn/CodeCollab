@@ -23,7 +23,11 @@ def create_app():
     jwt = JWTManager(app)
 
     #intializing Socket.IO- evenlet is used for WebSockets
-    socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
+    socketio = SocketIO(app, 
+                        cors_allowed_origins="*", 
+                        async_mode="eventlet",
+                        logger=True,
+                        engineio_logger=True)
 
 
     #REST API Routes
@@ -87,13 +91,16 @@ def create_app():
     @socketio.on("code_change", namespace="/ws")
     def on_code_change(data):
         room = data.get("room")
-        payload = {
-            "delta": data.get("delta"),
-            "ts": data.get("ts"),
+        delta = data.get("delta")
+        ts = data.get("ts")
+        client_id = data.get("clientId")
+        print(f"[code_change] room={room} ts={ts} clientId={client_id} bytes={len(delta) if isinstance(delta, str) else 'n/a'}")
+        emit("code_update", {
+            "delta": delta,
+            "ts": ts,
             "user": data.get("user"),
-            "clientId": data.get("clientId"),
-        }
-        emit("code_update", payload, to=room, include_self=False)
+            "clientId": client_id,
+        }, to=room, include_self=False)
         
     #cursor movement on screen
     @socketio.on("cursor_move", namespace="/ws")
@@ -107,12 +114,6 @@ def create_app():
             "user": data.get("user"),
             "pos": data.get("pos")
         }, to=room, include_self= False)
-    
-    #hearbeat to show precense
-    @socketio.on("presence_ping", namespace="/ws")
-    def on_presence_ping(data):
-        room = data.get("room")
-        emit("presence_pong", {"user": data.get("user")}, to=room, include_self=False)
     
     return app, socketio
 
